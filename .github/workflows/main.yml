@@ -9,9 +9,6 @@ on:
 
 jobs:
   build:
-    defaults:
-      run:
-        working-directory: ./app
     runs-on: ubuntu-latest
     name: Checks
     steps:
@@ -22,8 +19,8 @@ jobs:
       - run: |
           pip install --upgrade pip
           pip install black flake8 mypy==v0.902 isort autoflake
-          isort --force-single-line-imports api/app
-          autoflake --in-place --remove-unused-variables --remove-all-unused-imports --expand-star-imports --exclude=__init__.py api
+          isort --force-single-line-imports app
+          autoflake --in-place --remove-unused-variables --remove-all-unused-imports --expand-star-imports --exclude=__init__.py app
           black --diff --check api
           flake8 api
           mypy --strict-optional --follow-imports=skip --disallow-untyped-defs --disallow-untyped-calls --check-untyped-defs --ignore-missing-imports api
