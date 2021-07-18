@@ -17,4 +17,4 @@ jobs:
           autoflake --in-place --remove-unused-variables --remove-all-unused-imports --expand-star-imports
           black --diff --check app
           flake8
-          mypy --disallow-untyped-defs --disallow-untyped-calls --check-untyped-defs app
+          mypy --strict-optional --follow-imports=skip --disallow-untyped-defs --disallow-untyped-calls --check-untyped-defs --ignore-missing-imports app
