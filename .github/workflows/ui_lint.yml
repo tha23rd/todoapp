@@ -18,8 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v2
-        with:
-          cache: npm
       - name: Lint
         run: 'npm i && npm run lint'
         working-directory: ./ui
