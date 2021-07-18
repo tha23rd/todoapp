@@ -1,6 +1,6 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
-fail_fast: true
+#fail_fast: true
 
 repos:
   - repo: https://github.com/pycqa/isort
@@ -8,16 +8,19 @@ repos:
     hooks:
       - id: isort
         name: isort (python)
-        args: [--force-single-line-imports --apply]
+        args: [--force-single-line-imports]
   - repo: https://github.com/myint/autoflake
     rev: v1.4
     hooks:
       - id: autoflake
-        args:
-          - --in-place
-          - --remove-unused-variables
-          - --remove-all-unused-imports
-          - --expand-star-imports
+        args: [
+          --in-place,
+          --remove-unused-variables,
+          --remove-all-unused-imports,
+          --recursive,
+          --in-place,
+          --exclude=__init__.py
+          ]
   - repo: https://github.com/ambv/black
     rev: stable
     hooks:
@@ -41,3 +44,9 @@ repos:
             --follow-imports=skip,
             --strict-optional,
           ]
+  - repo: https://github.com/pycqa/isort
+    rev: 5.8.0
+    hooks:
+      - id: isort
+        name: isort (post-autoflake)
+        args: [--recursive]
