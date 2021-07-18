@@ -21,7 +21,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install black flake8 mypy==v0.902 isort autoflake
-          isort --force-single-line-imports --check-only app
+          isort --check-only app
           autoflake --in-place --remove-unused-variables --remove-all-unused-imports --expand-star-imports --exclude=__init__.py app
           black --diff --check app
           flake8
