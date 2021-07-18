@@ -1,8 +1,10 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Checks
+name: API-Lint-Checks
 on:
   push:
+    paths:
+      - "api/**"
   pull_request:
     branches:
       - main
