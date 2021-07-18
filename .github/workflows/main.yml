@@ -19,7 +19,7 @@ jobs:
       - run: |
           pip install --upgrade pip
           pip install black flake8 mypy==v0.902 isort autoflake
-          isort --recursive  --force-single-line-imports api
+          isort --recursive  --force-single-line-imports api/app
           autoflake --in-place --remove-unused-variables --remove-all-unused-imports --expand-star-imports --exclude=__init__.py api
           black --diff --check api
           flake8 api
