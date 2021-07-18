@@ -49,4 +49,4 @@ repos:
     hooks:
       - id: isort
         name: isort (post-autoflake)
-        args: [--recursive]
+        args: [--force-single-line-imports]
