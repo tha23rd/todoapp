@@ -1,0 +1,49 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Checks
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "api/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "api/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: API-Lint-Checks
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install Dependencies
+        working-directory: ./api
+        run: |
+          pip install --upgrade pip
+          pip install black flake8 mypy==v0.902 isort==5.8.0 autoflake
+
+      - name: Isort
+        working-directory: ./api
+        run: |
+          isort --force-single-line-imports --check-only app
+
+      - name: Black
+        working-directory: ./api
+        run: |
+          black --diff --check app
+
+      - name: Flake8
+        working-directory: ./api
+        run: |
+          flake8
+
+      - name: Mypy
+        working-directory: ./api
+        run: |
+          mypy --strict-optional --follow-imports=skip --disallow-untyped-defs --disallow-untyped-calls --check-untyped-defs --ignore-missing-imports app
