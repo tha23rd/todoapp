@@ -20,7 +20,7 @@ jobs:
         working-directory: ./api
         run: |
           pip install --upgrade pip
-          pip install black flake8 mypy==v0.902 isort=5.8.0 autoflake
+          pip install black flake8 mypy==v0.902 isort==5.8.0 autoflake
           isort --check-only app
           black --diff --check app
           flake8
