@@ -16,6 +16,7 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.x
+      - name: Lint
         working-directory: ./api
         run: |
           pip install --upgrade pip
