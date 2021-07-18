@@ -7,4 +7,4 @@ app = FastAPI(
 )
 
 
-print("small test ;)")
+print("small test 2 ;)")
