@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "todoapp-api"
+version = "0.1.0"
+description = ""
+authors = ["tha23rd"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+fastapi = "^0.66.0"
+pre-commit = "^2.13.0"
+
+[tool.poetry.dev-dependencies]
+black = "^21.7b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+py36 = true
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+
+    # The following are specific to Black, you probably don't want those.
+    | blib2to3
+    | tests/data
+)/
+'''
