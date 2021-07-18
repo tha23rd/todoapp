@@ -3,6 +3,10 @@
 name: Checks
 on:
   push:
+    branches:
+      - main
+    paths:
+      - "api/**"
   pull_request:
     branches:
       - main
