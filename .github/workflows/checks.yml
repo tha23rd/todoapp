@@ -15,6 +15,6 @@ jobs:
           pip install black flake8 mypy==v0.902 isort autoflake
           isort --recursive  --force-single-line-imports
           autoflake --in-place --remove-unused-variables --remove-all-unused-imports --expand-star-imports
-          black --diff --check app
+          black --diff --check api
           flake8
-          mypy --strict-optional --follow-imports=skip --disallow-untyped-defs --disallow-untyped-calls --check-untyped-defs --ignore-missing-imports app
+          mypy --strict-optional --follow-imports=skip --disallow-untyped-defs --disallow-untyped-calls --check-untyped-defs --ignore-missing-imports api
