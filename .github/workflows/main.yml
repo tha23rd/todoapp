@@ -11,7 +11,7 @@ jobs:
   build:
     defaults:
       run:
-        working-directory: ./api
+        working-directory: ./app
     runs-on: ubuntu-latest
     name: Checks
     steps:
