@@ -22,4 +22,4 @@ jobs:
           cache: npm
       - name: Lint
         run: 'npm i && npm run lint'
-        working-directory: ./api
+        working-directory: ./ui
