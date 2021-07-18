@@ -20,9 +20,8 @@ jobs:
         working-directory: ./api
         run: |
           pip install --upgrade pip
-          pip install black flake8 mypy==v0.902 isort autoflake
+          pip install black flake8 mypy==v0.902 isort=5.8.0 autoflake
           isort --check-only app
-          autoflake --in-place --remove-unused-variables --remove-all-unused-imports --expand-star-imports --exclude=__init__.py app
           black --diff --check app
           flake8
           mypy --strict-optional --follow-imports=skip --disallow-untyped-defs --disallow-untyped-calls --check-untyped-defs --ignore-missing-imports app
