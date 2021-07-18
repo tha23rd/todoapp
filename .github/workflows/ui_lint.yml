@@ -1,0 +1,23 @@
+name: Checks
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ui/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "ui/**"
+
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v2
+      - name: Lint
+        run: 'npm i && npm run lint'
+        working-directory: ./ui
