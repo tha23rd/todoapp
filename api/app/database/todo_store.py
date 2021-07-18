@@ -7,6 +7,7 @@ from rethinkdb.errors import ReqlDriverError
 from rethinkdb.errors import ReqlOpFailedError
 
 from app.models.todo_list import TodoList
+from app.models.todo_list import TodoItem
 
 r.set_loop_type("asyncio")
 default_todo_list_name = "My New Todo List"
@@ -58,4 +59,11 @@ class TodoStore:
             raise HTTPException(
                 status_code=500,
                 detail=f"could not insert record into DB: TodoList({todo_list})",
+            )
+
+    async def create_todo_item(self, list_id: str, item_name: str) -> bool:
+        todo_item = TodoItem(content=item_name)
+        try:
+            result = (
+                await r.db(db_name).table(db_table).get(list_id).update({"items"})
             )
