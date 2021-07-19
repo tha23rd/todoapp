@@ -63,7 +63,6 @@ class TodoStore:
 
     async def create_todo_item(self, list_id: str, item_name: str) -> Any:
         todo_item = TodoItem(name=item_name)
-        print('test')
         try:
             result = (
                 await r.db(db_name)
