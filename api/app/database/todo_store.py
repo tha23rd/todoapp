@@ -59,3 +59,31 @@ class TodoStore:
                 status_code=500,
                 detail=f"could not insert record into DB: TodoList({todo_list})",
             )
+
+    async def rename_list(self, list_id: str, new_name: str) -> Any:
+        try:
+            result = (
+                await r.db(db_name)
+                .table(db_table)
+                .get(list_id)
+                .update({"name": new_name})
+                .run(self._conn)
+            )
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not rename record in DB: TodoList({list_id})",
+            )
+        if result["errors"] != 0:
+            logger.error(f"DB request error: {result['first_error']}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not rename record in DB: TodoList({list_id})",
+            )
+        if result["skipped"] != 0:
+            logger.error(f"Skipped rename on list_id: {list_id}")
+            raise HTTPException(
+                status_code=404,
+                detail=f"could not find record in DB: TodoList({list_id})",
+            )

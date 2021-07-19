@@ -30,3 +30,8 @@ async def shutdown_event() -> Any:
 @app.post("/todolist/", response_model=TodoListCreateResponse)
 async def read_item() -> Any:
     return TodoListCreateResponse(id=await todo_store.create_todo_list())
+
+
+@app.patch("/todolist/{list_id}/{new_name}")
+async def rename_list(list_id: str, new_name: str) -> Any:
+    await todo_store.rename_list(list_id, new_name)
