@@ -1,5 +1,6 @@
 from typing import Any
 
+import socketio
 from fastapi import FastAPI
 from fastapi.logger import logger
 
@@ -10,6 +11,11 @@ from app.models.todo_list import TodoListCreateResponse
 app = FastAPI(
     title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
+
+sio = socketio.AsyncServer(cors_allowed_origins="*", async_mode="asgi")
+sio_app = socketio.ASGIApp(sio)
+
+app.mount("/ws", app=sio_app)
 
 DATABASE_HOST = settings.RDB_SERVER
 DATABASE_PORT = settings.RDB_PORT
@@ -30,3 +36,15 @@ async def shutdown_event() -> Any:
 @app.post("/todolist/", response_model=TodoListCreateResponse)
 async def read_item() -> Any:
     return TodoListCreateResponse(id=await todo_store.create_todo_list())
+
+
+@sio.event
+async def connect(sid: Any, environ: Any) -> Any:
+    logger.log(environ)
+    await sio.save_session(sid, {"username": "test"})
+
+
+@sio.event
+async def message(sid: Any, data: Any) -> Any:
+    session = await sio.get_session(sid)
+    print("message from ", session["username"])
