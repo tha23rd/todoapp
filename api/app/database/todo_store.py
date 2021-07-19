@@ -62,7 +62,7 @@ class TodoStore:
             )
 
     async def create_todo_item(self, list_id: str, item_name: str) -> Any:
-        todo_item = TodoItem(content=item_name)
+        todo_item = TodoItem(name=item_name)
         try:
             result = (
                 await r.db(db_name)
@@ -71,12 +71,20 @@ class TodoStore:
                 .update({"items": r.row["items"].append(todo_item.dict())})
                 .run(self._conn)
             )
-            if result["errors"] != 0:
-                logger.error(result["errors"])
-                raise (Exception("no clue"))
         except Exception as e:
             logger.error(e)
             raise HTTPException(
                 status_code=500,
                 detail=f"could not insert record into DB: TodoItem({todo_item})",
+            )
+        if result["errors"] != 0:
+            logger.error(f"DB request error: {result['first_error']}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not insert record into DB: TodoItem({todo_item})",
+            )
+        if result["skipped"] != 0:
+            logger.error(result["skipped"])
+            raise HTTPException(
+                status_code=404, detail=f"could not find todolist: {list_id}"
             )
