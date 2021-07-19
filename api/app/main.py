@@ -53,4 +53,3 @@ async def message(sid: Any, data: Any) -> Any:
 @app.post("/todolist/{list_id}/{item_name}")
 async def create_item(list_id: str, item_name: str) -> Any:
     await todo_store.create_todo_item(list_id, item_name)
-
