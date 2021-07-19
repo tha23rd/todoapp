@@ -28,8 +28,6 @@ force_grid_wrap = 0
 line_length = 88
 
 [tool.black]
-py36 = true
-include = '\.pyi?$'
 exclude = '''
 /(
     \.git

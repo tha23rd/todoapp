@@ -48,3 +48,9 @@ async def connect(sid: Any, environ: Any) -> Any:
 async def message(sid: Any, data: Any) -> Any:
     session = await sio.get_session(sid)
     print("message from ", session["username"])
+
+
+@app.post("/todolist/{list_id}/{item_name}")
+async def create_item(list_id: str, item_name: str) -> Any:
+    await todo_store.create_todo_item(list_id, item_name)
+
