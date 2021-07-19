@@ -31,6 +31,7 @@ async def shutdown_event() -> Any:
 async def read_item() -> Any:
     return TodoListCreateResponse(id=await todo_store.create_todo_list())
 
+
 @app.post("/todolist/{list_id}/{item_name}")
 async def create_item(list_id: str, item_name: str) -> Any:
     await todo_store.create_todo_item(list_id, item_name)
