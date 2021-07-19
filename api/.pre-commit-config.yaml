@@ -18,7 +18,6 @@ repos:
           --remove-unused-variables,
           --remove-all-unused-imports,
           --recursive,
-          --in-place,
           --exclude=__init__.py
           ]
   - repo: https://github.com/ambv/black

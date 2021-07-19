@@ -11,8 +11,8 @@ from rethinkdb import r
 class TodoItem(BaseModel):
     id: str = uuid.uuid1().hex
     created_date: datetime = r.now()
-    created_by: str  # user_id, for now could be optional?
-    content: str
+    created_by: Optional[str]  # user_id, for now could be optional?
+    name: str
     is_complete: bool = False
 
 

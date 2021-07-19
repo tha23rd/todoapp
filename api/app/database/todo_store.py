@@ -6,6 +6,7 @@ from rethinkdb import r
 from rethinkdb.errors import ReqlDriverError
 from rethinkdb.errors import ReqlOpFailedError
 
+from app.models.todo_list import TodoItem
 from app.models.todo_list import TodoList
 
 r.set_loop_type("asyncio")
@@ -86,4 +87,32 @@ class TodoStore:
             raise HTTPException(
                 status_code=404,
                 detail=f"could not find record in DB: TodoList({list_id})",
+            )
+
+    async def create_todo_item(self, list_id: str, item_name: str) -> Any:
+        todo_item = TodoItem(name=item_name)
+        try:
+            result = (
+                await r.db(db_name)
+                .table(db_table)
+                .get(list_id)
+                .update({"items": r.row["items"].append(todo_item.dict())})
+                .run(self._conn)
+            )
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not insert record into DB: TodoItem({todo_item})",
+            )
+        if result["errors"] != 0:
+            logger.error(f"DB request error: {result['first_error']}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not insert record into DB: TodoItem({todo_item})",
+            )
+        if result["skipped"] != 0:
+            logger.error(result["skipped"])
+            raise HTTPException(
+                status_code=404, detail=f"could not find todolist: {list_id}"
             )

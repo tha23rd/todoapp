@@ -35,3 +35,8 @@ async def read_item() -> Any:
 @app.patch("/todolist/{list_id}/{new_name}")
 async def rename_list(list_id: str, new_name: str) -> Any:
     await todo_store.rename_list(list_id, new_name)
+
+
+@app.post("/todolist/{list_id}/{item_name}")
+async def create_item(list_id: str, item_name: str) -> Any:
+    await todo_store.create_todo_item(list_id, item_name)
