@@ -21,6 +21,12 @@
 </style>
 
 <script>
+    import { io } from "socket.io-client";
+    const socket = io("ws://localhost:8000", {path: '/ws/socket.io'});
+    export let messages = [];
+    socket.on('message', function(message) {       
+        messages = messages.concat(message);
+    });
     export let name
 </script>
 
@@ -30,4 +36,11 @@
         Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to
         build Svelte apps.
     </p>
+    <div id="chatWindow">
+        <ul id="messages">
+            {#each messages as message}
+            <li>{message.message}</li>
+            {/each}
+        </ul>
+    </div>
 </main>
