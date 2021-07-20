@@ -8,6 +8,7 @@ from rethinkdb.errors import ReqlOpFailedError
 
 from app.models.todo_list import TodoItem
 from app.models.todo_list import TodoList
+from app.models.todo_list import TodoListRename
 
 r.set_loop_type("asyncio")
 default_todo_list_name = "My New Todo List"
@@ -61,13 +62,13 @@ class TodoStore:
                 detail=f"could not insert record into DB: TodoList({todo_list})",
             )
 
-    async def rename_list(self, list_id: str, new_name: str) -> Any:
+    async def rename_list(self, list_id: str, new_name: TodoListRename) -> Any:
         try:
             result = (
                 await r.db(db_name)
                 .table(db_table)
                 .get(list_id)
-                .update({"name": new_name})
+                .update({"name": new_name.name})
                 .run(self._conn)
             )
         except Exception as e:

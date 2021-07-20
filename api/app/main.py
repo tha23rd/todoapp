@@ -6,6 +6,7 @@ from fastapi.logger import logger
 from app.core.config import settings
 from app.database.todo_store import TodoStore
 from app.models.todo_list import TodoListCreateResponse
+from app.models.todo_list import TodoListRename
 
 app = FastAPI(
     title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
@@ -32,9 +33,10 @@ async def read_item() -> Any:
     return TodoListCreateResponse(id=await todo_store.create_todo_list())
 
 
-@app.patch("/todolist/{list_id}/{new_name}")
-async def rename_list(list_id: str, new_name: str) -> Any:
+@app.patch("/todolist/{list_id}")
+async def rename_list(list_id: str, new_name: TodoListRename) -> Any:
     await todo_store.rename_list(list_id, new_name)
+    return new_name
 
 
 @app.post("/todolist/{list_id}/{item_name}")
