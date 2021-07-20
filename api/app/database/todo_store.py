@@ -88,3 +88,16 @@ class TodoStore:
             raise HTTPException(
                 status_code=404, detail=f"could not find todolist: {list_id}"
             )
+
+    async def get_todolist_cursor(self, todolist_id: str) -> Any:
+        try:
+            cursor = (
+                await r.db(db_name)
+                .table(db_table)
+                .get(todolist_id)
+                .changes()
+                .run(self._conn)
+            )
+            return cursor
+        except Exception:
+            logger.error(f"Failed to get the todolist cursor for: {todolist_id}")

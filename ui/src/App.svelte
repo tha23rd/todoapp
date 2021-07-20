@@ -22,10 +22,14 @@
 
 <script>
     import { io } from "socket.io-client";
-    const socket = io("ws://localhost:8000", {path: '/ws/socket.io'});
+    const socket = io("ws://localhost:8000", {path: '/ws/socket.io', query: {roomName: "ad509ce8-daee-4084-b5d0-df3f0c15e398"}});
     export let messages = [];
+
     socket.on('message', function(message) {       
         messages = messages.concat(message);
+    });
+    socket.on('todo_list_change', function(change) {       
+        console.log(change)
     });
     export let name
 </script>
