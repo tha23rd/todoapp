@@ -34,7 +34,7 @@ async def read_item() -> Any:
 
 @app.get("/todolist/{list_id}")
 async def get_list(list_id: str) -> Any:
-    return await todo_store.get_todo_list_items(list_id)
+    return await todo_store.get_todo_list(list_id)
 
 
 @app.post("/todolist/{list_id}/{item_name}")
