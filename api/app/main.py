@@ -4,6 +4,7 @@ from typing import Any
 import socketio
 from fastapi import FastAPI
 from fastapi.logger import logger
+from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.database.todo_store import TodoStore
@@ -14,7 +15,14 @@ app = FastAPI(
     title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
-sio = socketio.AsyncServer(cors_allowed_origins="*", async_mode="asgi")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins="*",
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+sio = socketio.AsyncServer(cors_allowed_origins=[], async_mode="asgi")
 sio_app = socketio.ASGIApp(sio)
 ws_namespace = "/"
 
