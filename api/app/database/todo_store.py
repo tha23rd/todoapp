@@ -1,4 +1,5 @@
 from typing import Any
+from typing import List
 
 from fastapi import HTTPException
 from fastapi.logger import logger
@@ -60,6 +61,37 @@ class TodoStore:
                 status_code=500,
                 detail=f"could not insert record into DB: TodoList({todo_list})",
             )
+
+    async def get_todo_list_items(self, list_id: str) -> Any:
+        try:
+            result: TodoList = (
+                await r.db(db_name).table(db_table).get(list_id).run(self._conn)
+            )
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(
+                status_code=500,
+                detail=f"server error while getting record from DB: TodoList({list_id})",
+            )
+        if result is None:
+            logger.error(f"could not find todolist: {list_id}")
+            raise HTTPException(
+                status_code=404, detail=f"could not find todolist: {list_id}"
+            )
+        if "skipped" in result and result["skipped"] != 0:
+            logger.error(result["skipped"])
+            raise HTTPException(
+                status_code=404, detail=f"could not find todolist: {list_id}"
+            )
+        if "errors" in result and result["errors"] != 0:
+            logger.error(f"DB request error: {result['first_error']}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"error while getting record from DB: TodoList({list_id})",
+            )
+
+        items: List[TodoItem] = result["items"]
+        return {"items": items}
 
     async def create_todo_item(self, list_id: str, item_name: str) -> Any:
         todo_item = TodoItem(name=item_name)

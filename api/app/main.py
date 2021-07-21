@@ -32,6 +32,11 @@ async def read_item() -> Any:
     return TodoListCreateResponse(id=await todo_store.create_todo_list())
 
 
+@app.get("/todolist/{list_id}")
+async def get_list(list_id: str) -> Any:
+    return await todo_store.get_todo_list_items(list_id)
+
+
 @app.post("/todolist/{list_id}/{item_name}")
 async def create_item(list_id: str, item_name: str) -> Any:
     await todo_store.create_todo_item(list_id, item_name)
