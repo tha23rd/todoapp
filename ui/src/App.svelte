@@ -21,13 +21,18 @@
 </style>
 
 <script>
-    export let name
+    import { Router, Route } from 'svelte-routing'
+    import Home from './Home.svelte'
+    import TodoList from './TodoList.svelte'
+
+    export let url = ''
 </script>
 
-<main>
-    <h1>Hello {name}!</h1>
-    <p>
-        Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to
-        build Svelte apps.
-    </p>
-</main>
+<Router {url}>
+    <div>
+        <Route path="/"><Home /></Route>
+        <Route path="todo/:id" let:params>
+            <TodoList id={params.id} />
+        </Route>
+    </div>
+</Router>
