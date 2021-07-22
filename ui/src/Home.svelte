@@ -9,7 +9,7 @@
 </style>
 
 <script>
-    import { navigate } from 'svelte-routing'
+    import {push, pop, replace} from 'svelte-spa-router'
     async function onClick() {
         // generate a new todo list
         //navigate user to /todo/:id
@@ -17,7 +17,7 @@
         const body = await res.json()
         const todo_id = body.id
         console.log(body)
-        navigate(`todo/${todo_id}`)
+        push(`/todo/${todo_id}`)
     }
 </script>
 

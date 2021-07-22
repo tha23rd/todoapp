@@ -97,7 +97,12 @@ class TodoStore:
                 await r.db(db_name)
                 .table(db_table)
                 .get(list_id)
-                .update({"items": r.row["items"].append(todo_item.dict())})
+                .update(
+                    {
+                        "updated_date": r.now(),
+                        "items": r.row["items"].append(todo_item.dict()),
+                    }
+                )
                 .run(self._conn)
             )
         except Exception as e:

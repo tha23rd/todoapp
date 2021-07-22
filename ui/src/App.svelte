@@ -5,11 +5,17 @@
 </style>
 
 <script>
-    import { Router, Route } from 'svelte-routing'
+    import Router from 'svelte-spa-router'
     import Home from './Home.svelte'
     import TodoList from './TodoList.svelte'
 
-    export let url = ''
+    const routes = {
+        // Exact path
+        '/': Home,
+
+        // Using named parameters, with last being optional
+        '/todo/:id': TodoList,
+    }
 </script>
 
 <svelte:head>
@@ -19,15 +25,12 @@
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
         rel="stylesheet"
     />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap"
+        rel="stylesheet"
+    />
 </svelte:head>
 
 <body class="h-screen bg-whiteish">
-    <Router {url}>
-        <div>
-            <Route path="/"><Home /></Route>
-            <Route path="todo/:id" let:params>
-                <TodoList id={params.id} />
-            </Route>
-        </div>
-    </Router>
+    <Router {routes}/>
 </body>
