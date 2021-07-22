@@ -8,6 +8,7 @@ from rethinkdb.errors import ReqlOpFailedError
 
 from app.models.todo_list import TodoItem
 from app.models.todo_list import TodoList
+from app.models.todo_list import TodoListRename
 
 r.set_loop_type("asyncio")
 default_todo_list_name = "My New Todo List"
@@ -61,6 +62,34 @@ class TodoStore:
                 detail=f"could not insert record into DB: TodoList({todo_list})",
             )
 
+    async def rename_list(self, list_id: str, new_name: TodoListRename) -> Any:
+        try:
+            result = (
+                await r.db(db_name)
+                .table(db_table)
+                .get(list_id)
+                .update({"name": new_name.name})
+                .run(self._conn)
+            )
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not rename record in DB: TodoList({list_id})",
+            )
+        if result["errors"] != 0:
+            logger.error(f"DB request error: {result['first_error']}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not rename record in DB: TodoList({list_id})",
+            )
+        if result["skipped"] != 0:
+            logger.error(f"Skipped rename on list_id: {list_id}")
+            raise HTTPException(
+                status_code=404,
+                detail=f"could not find record in DB: TodoList({list_id})",
+            )
+
     async def get_todo_list(self, list_id: str) -> Any:
         try:
             result: TodoList = (
@@ -76,17 +105,6 @@ class TodoStore:
             logger.error(f"could not find todolist: {list_id}")
             raise HTTPException(
                 status_code=404, detail=f"could not find todolist: {list_id}"
-            )
-        if "skipped" in result and result["skipped"] != 0:
-            logger.error(result["skipped"])
-            raise HTTPException(
-                status_code=404, detail=f"could not find todolist: {list_id}"
-            )
-        if "errors" in result and result["errors"] != 0:
-            logger.error(f"DB request error: {result['first_error']}")
-            raise HTTPException(
-                status_code=500,
-                detail=f"error while getting record from DB: TodoList({list_id})",
             )
         return result
 
@@ -117,3 +135,16 @@ class TodoStore:
             raise HTTPException(
                 status_code=404, detail=f"could not find todolist: {list_id}"
             )
+
+    async def get_todolist_cursor(self, todolist_id: str) -> Any:
+        try:
+            cursor = (
+                await r.db(db_name)
+                .table(db_table)
+                .get(todolist_id)
+                .changes()
+                .run(self._conn)
+            )
+            return cursor
+        except Exception:
+            logger.error(f"Failed to get the todolist cursor for: {todolist_id}")
