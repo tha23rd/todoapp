@@ -9,8 +9,8 @@
 </style>
 
 <script>
-    import {push, pop, replace} from 'svelte-spa-router'
-    import { base_uri } from "./constants"
+    import { push, pop, replace } from 'svelte-spa-router'
+    import { base_uri } from './constants'
     async function onClick() {
         // generate a new todo list
         //navigate user to /todo/:id

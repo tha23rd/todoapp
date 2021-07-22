@@ -14,7 +14,7 @@
         '/': Home,
 
         // Using named parameters, with last being optional
-        '/todo/:id': TodoList,
+        '/todo/:id': TodoList
     }
 </script>
 
@@ -32,5 +32,5 @@
 </svelte:head>
 
 <body class="h-screen bg-whiteish">
-    <Router {routes}/>
+    <Router {routes} />
 </body>
