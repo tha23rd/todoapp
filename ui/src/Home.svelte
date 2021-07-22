@@ -10,10 +10,11 @@
 
 <script>
     import {push, pop, replace} from 'svelte-spa-router'
+    import { base_uri } from "./constants"
     async function onClick() {
         // generate a new todo list
         //navigate user to /todo/:id
-        const res = await fetch('http://localhost:8000/todolist/', { method: 'POST' })
+        const res = await fetch(`${base_uri}/todolist`, { method: 'POST' })
         const body = await res.json()
         const todo_id = body.id
         console.log(body)

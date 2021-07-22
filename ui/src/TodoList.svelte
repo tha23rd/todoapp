@@ -19,6 +19,7 @@
     import { onMount } from 'svelte'
     import HeaderBar from "./components/HeaderBar.svelte"
     import moment from "moment-timezone"
+    import { base_uri } from "./constants"
     const socket = io('ws://localhost:8000', {
         path: '/ws/socket.io',
         query: { roomName: params.id }
@@ -26,6 +27,11 @@
     let new_item = ""
     let todolist = { items: [] }
     onMount(async () => {
+        const res = await fetch(`${base_uri}/todolist/${params.id}`)
+        const json = await res.json()
+        todolist = json
+        todolist.updated_date = `Last Update: ${moment(new Date(todolist.updated_date)).tz('America/New_York').fromNow()}`
+
         socket.on('message', function (message) {
             messages = messages.concat(message)
         })
@@ -37,7 +43,7 @@
         })
     })
     async function onAddToList() {
-        const res = await fetch(`http://localhost:8000/todolist/${params.id}/${new_item}`, { method: 'POST' })
+        const res = await fetch(`${base_uri}/todolist/${params.id}/${new_item}`, { method: 'POST' })
         console.log(res)
         console.log(`adding new item! ${new_item}`)
         new_item = ""
@@ -45,6 +51,10 @@
     const onKeyPress = e => {
         if (e.charCode === 13) onAddToList();
     };
+
+    // async function onCheck(id, checked) = {
+
+    // }
 </script>
 
 <main>
