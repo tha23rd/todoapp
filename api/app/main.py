@@ -9,6 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.database.todo_store import TodoStore
 from app.models.todo_list import TodoListCreateResponse
+from app.models.todo_list import TodoListNewItem
 from app.models.todo_list import TodoListRename
 from app.pubsub.pubsub import PubSub
 
@@ -73,9 +74,9 @@ async def connect(sid: Any, environ: Any) -> Any:
     await sio.save_session(sid, {"username": "test"})
 
 
-@app.post("/todolist/{list_id}/{item_name}")
-async def create_item(list_id: str, item_name: str) -> Any:
-    await todo_store.create_todo_item(list_id, item_name)
+@app.post("/todolist/{list_id}/")
+async def create_item(list_id: str, new_item: TodoListNewItem) -> Any:
+    await todo_store.create_todo_item(list_id, new_item)
 
 
 @app.get("/trigger/")
