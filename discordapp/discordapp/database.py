@@ -15,12 +15,13 @@ from discord_slash.utils.manage_components import create_button
 
 # Be sure to update this to be able to update commands instantly
 guild_ids = [532850691019112478]
-url = "http://127.0.0.1:8000/todolist"
+api_url = "http://f0dc6ae37f49.ngrok.io/todolist"
+user_url = "http://pumped-dogs.surge.sh/#/todo/"
 
 
 async def post_request() -> Dict[str, str]:
     async with aiohttp.ClientSession() as session:
-        async with session.post(f"{url}/") as resp:
+        async with session.post(f"{api_url}/") as resp:
             response = await resp.json()
             return response
 
@@ -29,7 +30,7 @@ async def get_request(
     list_id: str,
 ) -> Dict[str, Any]:
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"{url}/{list_id}") as resp:
+        async with session.get(f"{api_url}/{list_id}") as resp:
             response = await resp.json()
             return response
 
@@ -86,7 +87,9 @@ class Database(commands.Cog):
                     custom_id="refresh_list",
                     label=f"{todo_list_id}",
                 ),
-                create_button(style=5, label="View List", url=f"{url}/{todo_list_id}"),
+                create_button(
+                    style=5, label="View List", url=f"{user_url}/{todo_list_id}"
+                ),
             ]
             action_row = create_actionrow(*buttons)
             await ctx.send(parsed_response, components=[action_row])
