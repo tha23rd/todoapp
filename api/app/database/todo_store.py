@@ -90,6 +90,24 @@ class TodoStore:
                 detail=f"could not find record in DB: TodoList({list_id})",
             )
 
+    async def get_todo_list(self, list_id: str) -> Any:
+        try:
+            result: TodoList = (
+                await r.db(db_name).table(db_table).get(list_id).run(self._conn)
+            )
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(
+                status_code=500,
+                detail=f"server error while getting record from DB: TodoList({list_id})",
+            )
+        if result is None:
+            logger.error(f"could not find todolist: {list_id}")
+            raise HTTPException(
+                status_code=404, detail=f"could not find todolist: {list_id}"
+            )
+        return result
+
     async def create_todo_item(self, list_id: str, item_name: str) -> Any:
         todo_item = TodoItem(name=item_name)
         try:

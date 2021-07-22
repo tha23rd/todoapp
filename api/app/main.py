@@ -52,6 +52,11 @@ async def read_item() -> Any:
     return TodoListCreateResponse(id=await todo_store.create_todo_list())
 
 
+@app.get("/todolist/{list_id}")
+async def get_list(list_id: str) -> Any:
+    return await todo_store.get_todo_list(list_id)
+
+
 @app.patch("/todolist/{list_id}")
 async def rename_list(list_id: str, new_name: TodoListRename) -> Any:
     await todo_store.rename_list(list_id, new_name)
