@@ -8,6 +8,7 @@ from rethinkdb.errors import ReqlOpFailedError
 
 from app.models.todo_list import TodoItem
 from app.models.todo_list import TodoList
+from app.models.todo_list import TodoListNewItem
 from app.models.todo_list import TodoListRename
 
 r.set_loop_type("asyncio")
@@ -108,8 +109,8 @@ class TodoStore:
             )
         return result
 
-    async def create_todo_item(self, list_id: str, item_name: str) -> Any:
-        todo_item = TodoItem(name=item_name)
+    async def create_todo_item(self, list_id: str, item: TodoListNewItem) -> Any:
+        todo_item = TodoItem(name=item.name)
         try:
             result = (
                 await r.db(db_name)

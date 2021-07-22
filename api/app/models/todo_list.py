@@ -28,5 +28,9 @@ class TodoListRename(BaseModel):
     name: str
 
 
+class TodoListNewItem(BaseModel):
+    name: str
+
+
 class TodoListCreateResponse(BaseModel):
     id: str = Field(..., description="The id of the todolist that was created")
