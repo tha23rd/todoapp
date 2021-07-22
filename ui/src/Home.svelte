@@ -1,3 +1,13 @@
+<style global lang="postcss">
+    h1 {
+        font-variant: small-caps;
+        text-transform: lowercase;
+    }
+    button {
+        font-variant: small-caps;
+    }
+</style>
+
 <script>
     import { navigate } from 'svelte-routing'
     async function onClick() {
@@ -11,8 +21,14 @@
     }
 </script>
 
-<main>
-    <h1>Welcome to the todo app >:)</h1>
-    <p>Click the button below to create a new shareable todo list</p>
-    <button on:click|once={onClick}> Create New Todo </button>
+<main class="container mx-auto sm:flex flex-col content-center">
+    <div class="m-auto h-screen flex">
+        <h1 class="text-4xl text-blackish self-center m-6">welcome</h1>
+        <button
+            class="rounded-none border-blackish border-1 text-xl py-1 px-4 self-center"
+            on:click|once={onClick}
+        >
+            create new todo
+        </button>
+    </div>
 </main>
