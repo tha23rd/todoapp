@@ -7,8 +7,11 @@ import discord.ext.commands
 from discord import Color
 from discord import Embed
 from discord.ext import commands
+from discord_slash import ComponentContext
 from discord_slash import SlashContext
 from discord_slash import cog_ext
+from discord_slash.utils.manage_components import create_actionrow
+from discord_slash.utils.manage_components import create_button
 
 # Be sure to update this to be able to update commands instantly
 guild_ids = [532850691019112478]
@@ -29,6 +32,17 @@ async def get_request(
         async with session.get(f"{url}/{list_id}") as resp:
             response = await resp.json()
             return response
+
+
+def parse_response(response: Dict[str, Any]) -> str:
+    if "items" in response and "id" in response:
+        items = response["items"]
+        parsed_items = f"**{response['name']}**\n"  # - id: {response['id']}
+        for item in items:
+            parsed_items += f"{item['name']:<25}{get_emoji(item['is_complete'])}\n"
+        return parsed_items if parsed_items else "empty_list"
+    else:
+        raise Exception(response)
 
 
 def get_emoji(completed: Union[str, bool]) -> str:
@@ -60,18 +74,32 @@ class Database(commands.Cog):
     )
     async def view_todolist(self, ctx: SlashContext, todo_list_id: str) -> None:
         response = await get_request(todo_list_id)
-        if "name" in response:
-            items = response["items"]
-            # embed = Embed(title=f"{response['name']}", color=Color.blue(), description=todo_list_id)
-            parsed_items = f"**{response['name']}** - id: {todo_list_id}\n"
-            for item in items:
-                parsed_items += f"{item['name']:<25}{get_emoji(item['is_complete'])}\n"
-            # embed.add_field(name="Items", value=parsed_items if parsed_items else "empty_list")
-            await ctx.send(parsed_items if parsed_items else "empty_list")
-        elif "detail" in response:
+        if "detail" in response:
             await self.view_error(ctx, response["detail"])
+            return
         else:
-            raise Exception(response)
+            parsed_response = parse_response(response)
+            buttons = [
+                create_button(
+                    style=1,
+                    emoji="🔄",
+                    custom_id="refresh_list",
+                    label=f"{todo_list_id}",
+                ),
+                create_button(style=5, label="View List", url=f"{url}/{todo_list_id}"),
+            ]
+            action_row = create_actionrow(*buttons)
+            await ctx.send(parsed_response, components=[action_row])
+
+    @cog_ext.cog_component(components="refresh_list")
+    async def refresh_list(self, ctx: ComponentContext) -> None:
+        list_id = ctx.component["label"]
+        response = await get_request(list_id)
+        if "detail" in response:
+            parsed_response = response["detail"]
+        else:
+            parsed_response = parse_response(response)
+        await ctx.edit_origin(content=parsed_response)
 
     @view_todolist.error
     async def view_error(self, ctx: SlashContext, error: str) -> None:

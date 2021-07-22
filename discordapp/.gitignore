@@ -1,3 +1,7 @@
-tokens.py
+__pycache__/
+
 discord.log
-__pycache__
+
+tokens.py
+
+test.py
