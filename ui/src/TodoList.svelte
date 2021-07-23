@@ -54,7 +54,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({name: new_item})
+            body: JSON.stringify({ name: new_item })
         })
         console.log(res)
         console.log(`adding new item! ${new_item}`)
