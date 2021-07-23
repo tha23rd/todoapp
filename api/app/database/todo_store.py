@@ -1,6 +1,7 @@
 from typing import Any
 
 from fastapi import HTTPException
+from fastapi.encoders import jsonable_encoder
 from fastapi.logger import logger
 from rethinkdb import r
 from rethinkdb.errors import ReqlDriverError
@@ -138,13 +139,18 @@ class TodoStore:
             )
 
     async def create_todo_item(self, list_id: str, item: TodoListNewItem) -> Any:
-        todo_item = TodoItem(name=item.name)
+        todo_item = jsonable_encoder(TodoItem(name=item.name))
         try:
             result = (
                 await r.db(db_name)
                 .table(db_table)
                 .get(list_id)
-                .update({"items": r.row["items"].append(todo_item.dict())})
+                .update(
+                    {
+                        "updated_date": r.now(),
+                        "items": r.row["items"].append(todo_item),
+                    }
+                )
                 .run(self._conn)
             )
         except Exception as e:
