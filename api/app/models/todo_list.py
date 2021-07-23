@@ -15,7 +15,7 @@ class Path(str, Enum):
 
 
 class TodoItem(BaseModel):
-    id: str = uuid.uuid4().hex
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
     created_date: datetime = r.now()
     created_by: Optional[str]  # user_id, for now could be optional?
     name: str

@@ -5,7 +5,7 @@
     export let subheader
 </script>
 
-<div class="flex items-center gap-4 p-0">
+<div class="flex items-center gap-4 p-0 md:flex-row flex-col">
     <H1 text={header} />
     <SubHeader text={subheader} />
 </div>
