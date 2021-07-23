@@ -67,6 +67,11 @@ async def edit_list(list_id: str, edit: TodoListEdit) -> Any:
         await todo_store.rename_list(list_id, edit)
 
 
+@app.delete("/todolist/{list_id}")
+async def delete_list(list_id: str) -> Any:
+    await todo_store.delete_todo_list(list_id)
+
+
 @sio.event
 async def connect(sid: Any, environ: Any) -> Any:
     query = urllib.parse.parse_qs(environ["QUERY_STRING"])

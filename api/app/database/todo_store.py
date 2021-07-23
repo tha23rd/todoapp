@@ -109,6 +109,34 @@ class TodoStore:
             )
         return result
 
+    async def delete_todo_list(self, list_id: str) -> Any:
+        try:
+            result = (
+                await r.db(db_name)
+                .table(db_table)
+                .get(list_id)
+                .delete()
+                .run(self._conn)
+            )
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(
+                status_code=500,
+                detail=f"server error while deleting record from DB: TodoList({list_id})",
+            )
+        if result["errors"] != 0:
+            logger.error(f"DB request error: {result['first_error']}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not delete record from DB: TodoList({list_id})",
+            )
+        if result["skipped"] != 0:
+            logger.error(result["skipped"])
+            raise HTTPException(
+                status_code=404,
+                detail=f"could not find record in DB: TodoList({list_id})",
+            )
+
     async def create_todo_item(self, list_id: str, item: TodoListNewItem) -> Any:
         todo_item = TodoItem(name=item.name)
         try:
