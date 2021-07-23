@@ -4,11 +4,9 @@
     input:checked + div svg {
         @apply block;
     }
-
     .thin-border {
         border-width: 1px;
     }
-
     .rounded-custom {
         border-radius: 3px;
     }
@@ -24,21 +22,21 @@
     import HeaderBar from './components/HeaderBar.svelte'
     import moment from 'moment-timezone'
     import { base_uri, ws_base_uri } from './constants'
-    const socket = io(ws_base_uri, {
-        path: '/ws/socket.io',
-        query: { roomName: params.id }
-    })
 
     let new_item = ''
     let todolist = { items: [] }
 
-    onMount(async () => {
+    async function connectWS(list_id) {
         const res = await fetch(`${base_uri}/todolist/${params.id}`)
         const json = await res.json()
         todolist = json
         todolist.updated_date = `Last Update: ${moment(new Date(todolist.updated_date))
             .tz('America/New_York')
             .fromNow()}`
+        const socket = io(ws_base_uri, {
+            path: '/ws/socket.io',
+            query: { roomName: params.id }
+        })
 
         socket.on('message', function (message) {
             messages = messages.concat(message)
@@ -51,9 +49,14 @@
             )
                 .tz('America/New_York')
                 .fromNow()}`
-            console.log(change)
+            // console.log(change)
         })
-    })
+    }
+
+    $: {
+        connectWS(params.id)
+    }
+
     async function onAddToList() {
         const res = await fetch(`${base_uri}/todolist/${params.id}/`, {
             method: 'POST',
@@ -62,16 +65,15 @@
             },
             body: JSON.stringify({ name: new_item })
         })
-        console.log(res)
+        // console.log(res)
         console.log(`adding new item! ${new_item}`)
         new_item = ''
     }
     const onKeyPress = e => {
         if (e.charCode === 13) onAddToList()
     }
-
     async function onCheck(item) {
-        const result = await fetch(`${base_uri}/todolist/${params.id}`, {
+        await fetch(`${base_uri}/todolist/${params.id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -83,7 +85,6 @@
             })
         })
     }
-
     async function handleDelete(item) {
         const result = await fetch(`${base_uri}/todolist/${params.id}`, {
             method: 'DELETE'
