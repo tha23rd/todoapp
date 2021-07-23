@@ -49,8 +49,12 @@
         })
     })
     async function onAddToList() {
-        const res = await fetch(`${base_uri}/todolist/${params.id}/${new_item}`, {
-            method: 'POST'
+        const res = await fetch(`${base_uri}/todolist/${params.id}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: new_item})
         })
         console.log(res)
         console.log(`adding new item! ${new_item}`)
