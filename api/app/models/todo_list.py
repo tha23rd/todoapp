@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from enum import Enum
 from typing import List
 from typing import Optional
 
@@ -8,8 +9,13 @@ from pydantic import Field
 from rethinkdb import r
 
 
+class Path(str, Enum):
+    RENAME_LIST = "rename_list"
+    COMPLETE_ITEM = "complete_item"
+
+
 class TodoItem(BaseModel):
-    id: str = uuid.uuid1().hex
+    id: str = uuid.uuid4().hex
     created_date: datetime = r.now()
     created_by: Optional[str]  # user_id, for now could be optional?
     name: str
@@ -24,8 +30,11 @@ class TodoList(BaseModel):
     items: List[TodoItem] = []
 
 
-class TodoListRename(BaseModel):
-    name: str
+class TodoListEdit(BaseModel):
+    name: Optional[str]
+    id: Optional[str]
+    is_complete: Optional[bool]
+    path: Path
 
 
 class TodoListNewItem(BaseModel):
