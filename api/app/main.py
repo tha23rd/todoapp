@@ -8,9 +8,10 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.database.todo_store import TodoStore
+from app.models.todo_list import Path
 from app.models.todo_list import TodoListCreateResponse
+from app.models.todo_list import TodoListEdit
 from app.models.todo_list import TodoListNewItem
-from app.models.todo_list import TodoListRename
 from app.pubsub.pubsub import PubSub
 
 app = FastAPI(
@@ -59,9 +60,11 @@ async def get_list(list_id: str) -> Any:
 
 
 @app.patch("/todolist/{list_id}")
-async def rename_list(list_id: str, new_name: TodoListRename) -> Any:
-    await todo_store.rename_list(list_id, new_name)
-    return new_name
+async def edit_list(list_id: str, edit: TodoListEdit) -> Any:
+    if edit.path == Path.COMPLETE_ITEM:
+        await todo_store.complete_todo_item(list_id, edit)
+    if edit.path == Path.RENAME_LIST:
+        await todo_store.rename_list(list_id, edit)
 
 
 @sio.event
