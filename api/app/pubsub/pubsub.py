@@ -20,13 +20,20 @@ class PubSub:
     async def _subscribe_to_todolist(self, todolist_id: str) -> Any:
         cursor = await self._todostore.get_todolist_cursor(todolist_id)
         while await cursor.fetch_next():
-            item = await cursor.next()
-            await self._sio.emit(
-                "todo_list_change", jsonable_encoder(item), room=todolist_id
-            )
-            if self.room_is_empty(todolist_id):
-                self.subbed_channels.remove(todolist_id)
-                return
+            try:
+                item = await cursor.next()
+                await self._sio.emit(
+                    "todo_list_change", jsonable_encoder(item), room=todolist_id
+                )
+                print("Emitted change")
+                if self.room_is_empty(todolist_id):
+                    self.subbed_channels.remove(todolist_id)
+                    print("exiting subscription")
+                    return
+            except Exception:
+                pass
+        self.subbed_channels.remove(todolist_id)
+        print("exiting subscription while loop")
 
     def room_is_empty(self, room_id: str) -> Any:
         return len(self._sio.manager.rooms[self._ns][room_id]) == 0

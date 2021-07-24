@@ -2,4 +2,9 @@
     export let text
 </script>
 
-<h1 class="md:text-5xl text-2xl font-light text-blackish self-center">{text}</h1>
+<span
+    contenteditable="true"
+    bind:innerHTML={text}
+    class="md:text-5xl text-2xl font-light text-blackish self-center my-auto uppercase"
+    >{text}</span
+>

@@ -6,6 +6,6 @@
 </script>
 
 <div class="flex items-center gap-4 p-0 md:flex-row flex-col">
-    <H1 text={header} />
+    <H1 bind:text={header} />
     <SubHeader text={subheader} />
 </div>

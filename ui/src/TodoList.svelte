@@ -18,18 +18,19 @@
 <script>
     export let params
     import { io } from 'socket.io-client'
-    import { onMount } from 'svelte'
     import HeaderBar from './components/HeaderBar.svelte'
     import moment from 'moment-timezone'
     import { base_uri, ws_base_uri } from './constants'
 
     let new_item = ''
     let todolist = { items: [] }
+    let list_name = 'My New List'
 
-    async function connectWS(list_id) {
+    async function connectWS() {
         const res = await fetch(`${base_uri}/todolist/${params.id}`)
         const json = await res.json()
         todolist = json
+        list_name = todolist.name
         todolist.updated_date = `Last Update: ${moment(new Date(todolist.updated_date))
             .tz('America/New_York')
             .fromNow()}`
@@ -44,17 +45,44 @@
         socket.on('todo_list_change', function (change) {
             const new_val = change.new_val
             todolist = new_val
+            list_name = todolist.name
             todolist.updated_date = `Last Update: ${moment(
                 new Date(todolist.updated_date)
             )
                 .tz('America/New_York')
                 .fromNow()}`
-            // console.log(change)
+            console.log(change)
         })
     }
 
     $: {
         connectWS(params.id)
+    }
+
+    $: {
+        console.log(list_name)
+        debounce(() => changeListName())
+    }
+
+    function changeListName() {
+        console.log('Calling@@')
+        fetch(`${base_uri}/todolist/${params.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: list_name,
+                path: 'rename_list'
+            })
+        })
+    }
+    let timer
+    const debounce = v => {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+            v()
+        }, 750)
     }
 
     async function onAddToList() {
@@ -94,10 +122,7 @@
 
 <main>
     <div class="xl:mx-72 md:my-20 space-y-5">
-        <HeaderBar
-            header={todolist.name || 'New List'}
-            subheader={todolist.updated_date || 'test'}
-        />
+        <HeaderBar bind:header={list_name} subheader={todolist.updated_date || 'test'} />
         <div>
             <input
                 on:keypress={onKeyPress}
@@ -119,10 +144,12 @@
                         type="checkbox"
                     />
                     <div
+                        class:border-greenish={item.is_complete}
                         class="bg-white thin-border rounded-full w-8 h-8 flex flex-shrink-0 justify-center items-center mr-6 self-center border-grayish "
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
+                            class:text-greenish={item.is_complete}
                             class="fill-current hidden pointer-events-none text-grayish"
                             viewBox="0 0 512 512"
                             ><title>Checkmark</title><path
