@@ -12,6 +12,9 @@ module.exports = {
             },
             grayish: {
                 DEFAULT: '#888F99'
+            },
+            greenish: {
+                DEFAULT: '#7FB587'
             }
         },
         fontFamily: {
@@ -30,6 +33,10 @@ module.exports = {
     purge: {
         content: [
             "./src/**/*.svelte",
+        ],
+        safelist: [
+            'border-greenish',
+            'text-greenish'
         ],
         enabled: production // disable purge in dev
     },
