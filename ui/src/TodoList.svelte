@@ -36,7 +36,8 @@
             .fromNow()}`
         const socket = io(ws_base_uri, {
             path: '/ws/socket.io',
-            query: { roomName: params.id }
+            query: { roomName: params.id },
+            transports: ['websocket', 'polling', 'flashsocket']
         })
 
         socket.on('message', function (message) {

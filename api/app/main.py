@@ -25,11 +25,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-sio = socketio.AsyncServer(cors_allowed_origins="*", async_mode="asgi")
+sio = socketio.AsyncServer(cors_allowed_origins=[], async_mode="asgi")
 sio_app = socketio.ASGIApp(sio)
 ws_namespace = "/"
-
-logger.error([str(origin) for origin in settings.BACKEND_CORS_ORIGINS])
 
 app.mount("/ws", app=sio_app)
 
