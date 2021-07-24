@@ -29,6 +29,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+logger.error(settings.BACKEND_CORS_ORIGINS)
+
 app.mount("/ws", app=sio_app)
 
 DATABASE_HOST = settings.RDB_SERVER
