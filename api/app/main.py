@@ -29,7 +29,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-logger.error(settings.BACKEND_CORS_ORIGINS)
+logger.error([str(origin) for origin in settings.BACKEND_CORS_ORIGINS])
 
 app.mount("/ws", app=sio_app)
 
@@ -50,7 +50,7 @@ async def shutdown_event() -> Any:
     await todo_store.close_connection()
 
 
-@app.post("/todolist", response_model=TodoListCreateResponse)
+@app.post("/todolist/", response_model=TodoListCreateResponse)
 async def read_item() -> Any:
     return TodoListCreateResponse(id=await todo_store.create_todo_list())
 
