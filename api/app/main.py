@@ -25,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-sio = socketio.AsyncServer(cors_allowed_origins=[], async_mode="asgi")
+sio = socketio.AsyncServer(cors_allowed_origins="*", async_mode="asgi")
 sio_app = socketio.ASGIApp(sio)
 ws_namespace = "/"
 

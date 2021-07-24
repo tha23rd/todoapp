@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "todoapi"
 
     RDB_SERVER: str = "localhost"
-    RDB_PORT: int = 28015
+    RDB_PORT: int = 9876
     RDB_PASSWORD: str = "password"
     RDB_DB: str = "todos"
 
