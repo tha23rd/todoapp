@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
         "http://localhost:5000",
         "http://localhost",
+        "http://localhost:5000/",
+        "http://localho.st:5000",
+        "http://localho.st",
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)

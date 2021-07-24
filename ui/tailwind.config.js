@@ -15,6 +15,9 @@ module.exports = {
             },
             greenish: {
                 DEFAULT: '#7FB587'
+            },
+            redish: {
+                DEFAULT: '#975460'
             }
         },
         fontFamily: {

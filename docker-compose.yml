@@ -1,0 +1,19 @@
+version: "3"
+services:
+  rethinkdb:
+    image: rethinkdb:latest
+    volumes:
+      - /db:/data/rethinkdb_data
+    ports:
+      - "8081:8080"
+      - "29015:29015"
+      - "28015:28015"
+  api:
+    build: ./api
+    environment:
+      - RDB_SERVER=rethinkdb
+      - RDB_PORT=28015
+    depends_on:
+      - rethinkdb
+    ports:
+      - "8000:8080"
