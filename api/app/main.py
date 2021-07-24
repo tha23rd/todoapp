@@ -24,7 +24,7 @@ ws_namespace = "/"
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
     allow_methods=["*"],
     allow_headers=["*"],
 )
