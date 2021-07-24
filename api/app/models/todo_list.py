@@ -12,6 +12,8 @@ from rethinkdb import r
 class Path(str, Enum):
     RENAME_LIST = "rename_list"
     COMPLETE_ITEM = "complete_item"
+    DELETE_LIST = "delete_list"
+    DELETE_ITEM = "delete_item"
 
 
 class TodoItem(BaseModel):
