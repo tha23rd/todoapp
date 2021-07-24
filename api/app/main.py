@@ -68,8 +68,11 @@ async def edit_list(list_id: str, edit: TodoListEdit) -> Any:
 
 
 @app.delete("/todolist/{list_id}")
-async def delete_list(list_id: str) -> Any:
-    await todo_store.delete_todo_list(list_id)
+async def delete_list(list_id: str, edit: TodoListEdit) -> Any:
+    if edit.path == Path.DELETE_LIST:
+        await todo_store.delete_todo_list(list_id)
+    if edit.path == Path.DELETE_ITEM:
+        await todo_store.delete_todo_item(list_id, edit)
 
 
 @sio.event
