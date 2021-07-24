@@ -208,6 +208,37 @@ class TodoStore:
                 detail=f"could not find item or todolist: {list_id}, {item.id}",
             )
 
+    async def delete_todo_item(self, list_id: str, item: TodoListEdit) -> Any:
+        try:
+            result = (
+                await r.db(db_name)
+                .table(db_table)
+                .get(list_id)
+                .update(
+                    lambda doc: {
+                        "items": doc["items"].filter(lambda ele: ele["id"].ne(item.id))
+                    }
+                )
+                .run(self._conn)
+            )
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(
+                status_code=500, detail=f"could not delete record in DB: {item.id}"
+            )
+        if result["errors"] != 0:
+            logger.error(f"DB request error: {result['first_error']}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not delete record in DB: TodoItem({item.id})",
+            )
+        if result["skipped"] != 0 or result["replaced"] == 0:
+            logger.error(result["skipped"])
+            raise HTTPException(
+                status_code=404,
+                detail=f"could not find item or todolist: {list_id}, {item.id}",
+            )
+
     async def get_todolist_cursor(self, todolist_id: str) -> Any:
         try:
             cursor = (
