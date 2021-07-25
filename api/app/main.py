@@ -64,14 +64,18 @@ async def edit_list(list_id: str, edit: TodoListEdit) -> Any:
         await todo_store.complete_todo_item(list_id, edit)
     if edit.path == Path.RENAME_LIST:
         await todo_store.rename_list(list_id, edit)
+    if edit.path == Path.RENAME_ITEM:
+        await todo_store.rename_todo_item(list_id, edit)
 
 
 @app.delete("/todolist/{list_id}")
-async def delete_list(list_id: str, edit: TodoListEdit) -> Any:
-    if edit.path == Path.DELETE_LIST:
-        await todo_store.delete_todo_list(list_id)
-    if edit.path == Path.DELETE_ITEM:
-        await todo_store.delete_todo_item(list_id, edit)
+async def delete_list(list_id: str) -> Any:
+    await todo_store.delete_todo_list(list_id)
+
+
+@app.delete("/todolist/{list_id}/{item_id}")
+async def delete_item(list_id: str, item_id: str) -> Any:
+    await todo_store.delete_todo_item(list_id, item_id)
 
 
 @sio.event

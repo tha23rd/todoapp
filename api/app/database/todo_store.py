@@ -70,7 +70,7 @@ class TodoStore:
                 await r.db(db_name)
                 .table(db_table)
                 .get(list_id)
-                .update({"name": new_name.name})
+                .update({"updated_date": r.now(), "name": new_name.name})
                 .run(self._conn)
             )
         except Exception as e:
@@ -179,13 +179,14 @@ class TodoStore:
                 .get(list_id)
                 .update(
                     {
+                        "updated_date": r.now(),
                         "items": r.row["items"].map(
                             lambda ele: r.branch(
                                 ele["id"].eq(item.id),
                                 ele.merge({"is_complete": item.is_complete}),
                                 ele,
                             )
-                        )
+                        ),
                     }
                 )
                 .run(self._conn)
@@ -208,15 +209,22 @@ class TodoStore:
                 detail=f"could not find item or todolist: {list_id}, {item.id}",
             )
 
-    async def delete_todo_item(self, list_id: str, item: TodoListEdit) -> Any:
+    async def rename_todo_item(self, list_id: str, item: TodoListEdit) -> Any:
         try:
             result = (
                 await r.db(db_name)
                 .table(db_table)
                 .get(list_id)
                 .update(
-                    lambda doc: {
-                        "items": doc["items"].filter(lambda ele: ele["id"].ne(item.id))
+                    {
+                        "updated_date": r.now(),
+                        "items": r.row["items"].map(
+                            lambda ele: r.branch(
+                                ele["id"].eq(item.id),
+                                ele.merge({"name": item.name}),
+                                ele,
+                            )
+                        ),
                     }
                 )
                 .run(self._conn)
@@ -224,19 +232,51 @@ class TodoStore:
         except Exception as e:
             logger.error(e)
             raise HTTPException(
-                status_code=500, detail=f"could not delete record in DB: {item.id}"
+                status_code=500, detail=f"could not edit record in DB: {item.id}"
             )
         if result["errors"] != 0:
             logger.error(f"DB request error: {result['first_error']}")
             raise HTTPException(
                 status_code=500,
-                detail=f"could not delete record in DB: TodoItem({item.id})",
+                detail=f"could not edit record in DB: TodoItem({item.id})",
             )
         if result["skipped"] != 0 or result["replaced"] == 0:
             logger.error(result["skipped"])
             raise HTTPException(
                 status_code=404,
                 detail=f"could not find item or todolist: {list_id}, {item.id}",
+            )
+
+    async def delete_todo_item(self, list_id: str, item_id: str) -> Any:
+        try:
+            result = (
+                await r.db(db_name)
+                .table(db_table)
+                .get(list_id)
+                .update(
+                    lambda doc: {
+                        "updated_date": r.now(),
+                        "items": doc["items"].filter(lambda ele: ele["id"].ne(item_id)),
+                    }
+                )
+                .run(self._conn)
+            )
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(
+                status_code=500, detail=f"could not delete record in DB: {item_id}"
+            )
+        if result["errors"] != 0:
+            logger.error(f"DB request error: {result['first_error']}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"could not delete record in DB: TodoItem({item_id})",
+            )
+        if result["skipped"] != 0 or result["replaced"] == 0:
+            logger.error(result["skipped"])
+            raise HTTPException(
+                status_code=404,
+                detail=f"could not find item or todolist: {list_id}, {item_id}",
             )
 
     async def get_todolist_cursor(self, todolist_id: str) -> Any:
