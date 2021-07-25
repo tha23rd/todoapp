@@ -29,8 +29,13 @@
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap"
         rel="stylesheet"
     />
+    <style>
+        body {
+            background: #f3f6f9;
+        }
+    </style>
 </svelte:head>
 
-<body class="h-screen bg-whiteish">
+<body class="">
     <Router {routes} />
 </body>

@@ -152,6 +152,8 @@
                             class:hidden={!item.is_complete}
                             class="fill-current pointer-events-none text-grayish"
                             viewBox="0 0 512 512"
+                            width="100%"
+                            height="100%"
                             ><title>Checkmark</title><path
                                 fill="none"
                                 stroke="currentColor"
