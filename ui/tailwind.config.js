@@ -39,7 +39,8 @@ module.exports = {
         ],
         safelist: [
             'border-greenish',
-            'text-greenish'
+            'text-greenish',
+            'hidden'
         ],
         enabled: production // disable purge in dev
     },
