@@ -28,8 +28,10 @@ class TodoStore:
     async def setup_db(self) -> Any:
         try:
             self._conn = await r.connect(self._conn_string, self._port)
-            if "todos" not in await r.db_list().run(self._conn):  # setup db and tables
-                await r.db_create("todos").run(self._conn)
+            if db_name not in await r.db_list().run(self._conn):  # setup db and tables
+                await r.db_create(db_name).run(self._conn)
+                await r.db(db_name).table_create(db_table).run(self._conn)
+            elif db_table not in await r.db(db_name).table_list().run(self._conn):
                 await r.db(db_name).table_create(db_table).run(self._conn)
         except ReqlDriverError as err:
             logger.warning(f"Could not connect to DB: {err}")
