@@ -88,7 +88,7 @@ async def connect(sid: Any, environ: Any) -> Any:
     await sio.save_session(sid, {"username": "test"})
 
 
-@app.post("/todolist/{list_id}/")
+@app.post("/todolist/{list_id}")
 async def create_item(list_id: str, new_item: TodoListNewItem) -> Any:
     await todo_store.create_todo_item(list_id, new_item)
 

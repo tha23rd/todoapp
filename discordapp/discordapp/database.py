@@ -15,8 +15,8 @@ from discord_slash.utils.manage_components import create_button
 
 # Be sure to update this to be able to update commands instantly
 guild_ids = [532850691019112478]
-api_url = "http://f0dc6ae37f49.ngrok.io/todolist"
-user_url = "http://pumped-dogs.surge.sh/#/todo/"
+api_url = "http://78.47.191.249:8000/todolist"
+user_url = "http://rt-todo.surge.sh/#/todo"
 
 
 async def post_request() -> Dict[str, str]:
