@@ -12,6 +12,7 @@ from app.database.user_store import UserStore
 from app.models.todo_list import TodoListCreateResponse
 from app.models.todo_list import TodoListNewItem
 from app.models.todo_list import TodoListRename
+from app.models.user import NewUserRegisterRequest
 from app.models.user import NewUserRequest
 from app.models.user import UserCreateResponse
 from app.pubsub.pubsub import PubSub
@@ -30,7 +31,6 @@ app.add_middleware(
 sio = socketio.AsyncServer(cors_allowed_origins=[], async_mode="asgi")
 sio_app = socketio.ASGIApp(sio)
 ws_namespace = "/"
-
 
 app.mount("/ws", app=sio_app)
 
@@ -97,3 +97,13 @@ async def trigger() -> Any:
 @app.post("/user", response_model=UserCreateResponse)
 async def create_new_user(new_user: NewUserRequest) -> Any:
     return UserCreateResponse(id=await user_store.create_user(new_user=new_user))
+
+
+@app.post("/user/temp", response_model=UserCreateResponse)
+async def create_temp_user() -> Any:
+    return UserCreateResponse(id=await user_store.create_temp_user())
+
+
+@app.patch("/user/temp")
+async def register_temp_user(new_user: NewUserRegisterRequest) -> Any:
+    await user_store.register_temp_user(new_user)

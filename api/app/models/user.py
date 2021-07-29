@@ -7,13 +7,19 @@ from pydantic import Field
 from rethinkdb import r
 
 
+class TempUser(BaseModel):
+    id: Optional[str]
+    registered_date: datetime = r.now()
+    lists: List[str] = []
+
+
 class User(BaseModel):
     id: Optional[str]
     registered_date: datetime = r.now()
     username: str
     password_hash: bytes
     password_salt: bytes
-    lists: List[str]
+    lists: List[str] = []
 
 
 class UserCreateResponse(BaseModel):
@@ -23,3 +29,7 @@ class UserCreateResponse(BaseModel):
 class NewUserRequest(BaseModel):
     username: str
     raw_password: str
+
+
+class NewUserRegisterRequest(NewUserRequest):
+    id: str
