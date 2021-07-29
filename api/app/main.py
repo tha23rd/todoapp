@@ -8,9 +8,12 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.database.todo_store import TodoStore
+from app.database.user_store import UserStore
 from app.models.todo_list import TodoListCreateResponse
 from app.models.todo_list import TodoListNewItem
 from app.models.todo_list import TodoListRename
+from app.models.user import NewUserRequest
+from app.models.user import UserCreateResponse
 from app.pubsub.pubsub import PubSub
 
 app = FastAPI(
@@ -35,17 +38,20 @@ DATABASE_HOST = settings.RDB_SERVER
 DATABASE_PORT = settings.RDB_PORT
 logger.info(f"DB host: {DATABASE_HOST}, DB port: {DATABASE_PORT}")
 todo_store = TodoStore(conn_string=DATABASE_HOST, port=DATABASE_PORT)
+user_store = UserStore(conn_string=DATABASE_HOST, port=DATABASE_PORT)
 pubsub = PubSub(sio, todo_store, ws_namespace)
 
 
 @app.on_event("startup")
 async def startup_event() -> Any:
     await todo_store.setup_db()
+    await user_store.setup_db()
 
 
 @app.on_event("shutdown")
 async def shutdown_event() -> Any:
     await todo_store.close_connection()
+    await user_store.close_connection()
 
 
 @app.post("/todolist/", response_model=TodoListCreateResponse)
@@ -86,3 +92,8 @@ async def trigger() -> Any:
     await sio.emit(
         "message", {"message": "hello!"}, room="ad509ce8-daee-4084-b5d0-df3f0c15e398"
     )
+
+
+@app.post("/user", response_model=UserCreateResponse)
+async def create_new_user(new_user: NewUserRequest) -> Any:
+    return UserCreateResponse(id=await user_store.create_user(new_user=new_user))
