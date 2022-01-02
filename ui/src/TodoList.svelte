@@ -25,12 +25,14 @@
     let new_item = ''
     let todolist = { items: [] }
     let list_name = 'My New List'
+    let rawDate = Date.now()
 
     async function connectWS() {
         const res = await fetch(`${base_uri}/todolist/${params.id}`)
         const json = await res.json()
         todolist = json
         list_name = todolist.name
+        rawDate = todolist.updated_date
         todolist.updated_date = `Last Update: ${moment(new Date(todolist.updated_date))
             .tz('America/New_York')
             .fromNow()}`
@@ -45,6 +47,8 @@
         })
         socket.on('todo_list_change', function (change) {
             const new_val = change.new_val
+            rawDate = new_val.updated_date
+            updateLocalListDate(new_val.updated_date)
             todolist = new_val
             list_name = todolist.name
             todolist.updated_date = `Last Update: ${moment(
@@ -76,6 +80,39 @@
                 path: 'rename_list'
             })
         })
+        updateLocalListName()
+    }
+    function updateLocalListName() {
+        let lists = getLocalList()
+
+        if (lists) {
+            lists[params.id].name = list_name
+
+            localStorage.setItem('lists', JSON.stringify(lists))
+        }
+    }
+    function updateLocalListDate(date) {
+        let lists = getLocalList()
+
+        if (lists) {
+            lists[params.id].createdAt = date
+
+            localStorage.setItem('lists', JSON.stringify(lists))
+        }
+    }
+    function getLocalList() {
+        let lists = localStorage.getItem('lists')
+        if (!lists) {
+            lists = {}
+        } else {
+            lists = JSON.parse(lists)
+        }
+
+        if (!(params.id in lists)) {
+            lists[params.id] = { name: list_name, createdAt: rawDate }
+        }
+
+        return lists
     }
     let timer
     const debounce = v => {
